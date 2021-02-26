@@ -1,10 +1,15 @@
 import { Router } from 'express';
-import { UserController } from './controllers/UsersController';
+import { SurveysController } from './controllers/SurveysController';
+import { UsersController } from './controllers/UsersController';
 
 const router = Router();
 
-const userController = new UserController();
+const userController = new UsersController();
+const surveyController = new SurveysController();
 
-router.post('/user', userController.create);
+router.post('/users', userController.create);
+
+router.get('/surveys', surveyController.index);
+router.post('/surveys', surveyController.create);
 
 export { router };

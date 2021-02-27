@@ -17,9 +17,16 @@ describe("Survets", () => {
       });
     
     expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("id");
   });
 
   it('Should be able to create a new survey', async () => {
+    await request(app).post('/surveys')
+      .send({
+        title: 'survey test',
+        description: 'survey to evaluate service quality'
+      });
+      
     const response = await request(app).get('/surveys');
     
     const { status, body } = response;

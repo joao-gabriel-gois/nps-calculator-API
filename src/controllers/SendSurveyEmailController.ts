@@ -33,20 +33,21 @@ class SendSurveyEmailController {
     }
     const npsTemplatePath = path.resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
 
+    const doesSurveyUserExists = await surveysUsersRepository.findOne({
+      where: { user_id: user.id, value: null },
+      relations: ['user', 'survey']
+    });
+
     const variables = {
       name: user.name,
       title: survey.title,
       description: survey.description,
-      user_id: user.id,
+      id: '',
       link: process.env.MAIL_ANSWER_URL
     }
 
-    const doesSurveyUserExists = await surveysUsersRepository.findOne({
-      where: [{ user_id: user.id }, { value: null }],
-      relations: ['user', 'survey']
-    });
-
     if (doesSurveyUserExists) {
+      variables.id = doesSurveyUserExists.id;
       await SendEmailService.execute(email, survey.title, variables, npsTemplatePath);
       return response.json(doesSurveyUserExists);
     }
@@ -57,6 +58,8 @@ class SendSurveyEmailController {
     });
 
     await surveysUsersRepository.save(surveyUser);
+
+    variables.id = surveyUser.id;
 
     
     await SendEmailService.execute(user.email, survey.title, variables, npsTemplatePath);

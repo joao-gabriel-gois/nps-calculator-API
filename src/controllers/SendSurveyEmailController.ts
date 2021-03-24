@@ -61,10 +61,15 @@ class SendSurveyEmailController {
 
     variables.id = surveyUser.id;
 
-    
-    await SendEmailService.execute(user.email, survey.title, variables, npsTemplatePath);
+    try {    
+      await SendEmailService.execute(user.email, survey.title, variables, npsTemplatePath);
 
-    return response.json(surveyUser);
+      return response.json(surveyUser);
+    } catch (error) {
+      return response.status(503).json({
+        error,
+      })
+    }
   }
 }
 
